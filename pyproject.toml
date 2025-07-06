@@ -1,0 +1,20 @@
+[project]
+name = "pnda-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastmcp>=2.10.2",
+    "openai>=1.93.0",
+    "pinecone>=7.3.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "celery>=5.5.3",
+    "redis>=6.2.0",
+    "requests>=2.32.4",
+    "tqdm>=4.67.1"
+]
