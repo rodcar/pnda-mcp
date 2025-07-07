@@ -91,5 +91,16 @@ def get_dataset_by_id(id: str) -> dict:
         return {"id": id, "metadata": metadata, "text": metadata.get("text") if metadata else None}
     return {"error": f"Item with ID {id} not found"}
 
+@mcp.prompt()
+def generate_questions_by_topic(topic: str) -> str:
+    return f"""Topic: {topic}
+    Follow these steps to complete the task:
+    - Based on the topic, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
+    - If no relevant datasets are found, retry the search with a different query.
+    - Based on the search results, get the detailed information of one or more datasets.
+    - Think hard, generate a list of 5 questions that would be possible to answer with the datasets and it is related to the topic.
+    - You questions should be based on the datasets and the topic. Do not make up questions.
+    """
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
