@@ -11,7 +11,7 @@ app = Celery(
 )
 
 app.conf.update(
-    worker_concurrency=os.getenv('WORKER_CONCURRENCY', 4),
+    worker_concurrency=int(os.getenv('WORKER_CONCURRENCY', 4)),
     worker_prefetch_multiplier=1,
     task_acks_late=True,
     worker_hostname='worker@%h',
