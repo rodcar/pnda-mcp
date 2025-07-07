@@ -18,8 +18,24 @@ client = OpenAI()
 cache = {}
 
 @mcp.tool()
-def search_data(query: str, top_k: int = 10) -> dict:
-    """Search for similar content in the Pinecone index"""
+def search_datasets(query: str, top_k: int = 10) -> dict:
+    """
+    Search for relevant content (datasets) from the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
+    
+    Find information from Peru's national open data platform (datosabiertos.gob.pe) that 
+    semantically matches your search terms. Use this when you need to discover content 
+    related to a topic, concept, or question. The search understands meaning and context, 
+    not just exact word matches.
+    
+    Args:
+        query (str): What you want to search for - can be keywords, phrases, or questions.
+        top_k (int, optional): How many results to return. Defaults to 10.
+    
+    Returns:
+        dict: Search results containing:
+             - "query": Your original search query
+             - "results": List of matching items with their ID, relevance score, and dataset name
+    """
     embedding = client.embeddings.create(input=query, model="text-embedding-3-small").data[0].embedding
     results = index.query(top_k=top_k, vector=embedding, include_metadata=True, include_values=False)
     
@@ -30,8 +46,24 @@ def search_data(query: str, top_k: int = 10) -> dict:
     return {"query": query, "results": [{"id": match["id"], "score": match["score"], "text": match["metadata"]["text"]} for match in results["matches"]]}
 
 @mcp.tool()
-def get_item_by_id(id: str) -> dict:
-    """Get a specific item from Pinecone by ID"""
+def get_dataset_by_id(id: str) -> dict:
+    """
+    Get detailed information about a specific dataset from the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
+    
+    Use this when you have an dataset ID from search results and want to retrieve
+    the full content and metadata for that specific dataset from Peru's national 
+    open data platform (datosabiertos.gob.pe).
+    
+    Args:
+        id (str): The unique ID of the dataset you want to retrieve.
+    
+    Returns:
+        dict: Dataset details including:
+             - "id": The dataset identifier
+             - "text": The title of the dataset
+             - "resources": List of resources (files) in the dataset, includes the file path, name, size, created, mimetype, format
+             Returns error message if dataset not found.
+    """
     # Check cache first
     if id in cache:
         metadata = cache[id]
