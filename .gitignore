@@ -62,3 +62,6 @@ celery/results/
 
 # Results
 etl/results/
+
+# Logs
+etl/logs/
