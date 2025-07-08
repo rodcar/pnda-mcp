@@ -18,7 +18,7 @@ client = OpenAI()
 cache = {}
 
 @mcp.tool()
-def search_datasets(query: str, top_k: int = 10) -> dict:
+def dataset_search(query: str, top_k: int = 10) -> dict:
     """
     Search for relevant content (datasets) from the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
     
@@ -29,13 +29,14 @@ def search_datasets(query: str, top_k: int = 10) -> dict:
     
     Args:
         query (str): What you want to search for - can be keywords, phrases, or questions.
-        top_k (int, optional): How many results to return. Defaults to 10.
+        top_k (int, optional): How many results to return. Defaults to 10, max 25.
     
     Returns:
         dict: Search results containing:
              - "query": Your original search query
              - "results": List of matching items with their ID, relevance score, and dataset name
     """
+    top_k = min(top_k, 25)
     embedding = client.embeddings.create(input=query, model="text-embedding-3-small").data[0].embedding
     results = index.query(top_k=top_k, vector=embedding, include_metadata=True, include_values=False)
     
@@ -46,7 +47,7 @@ def search_datasets(query: str, top_k: int = 10) -> dict:
     return {"query": query, "results": [{"id": match["id"], "score": match["score"], "text": match["metadata"]["text"]} for match in results["matches"]]}
 
 @mcp.tool()
-def get_dataset_by_id(id: str) -> dict:
+def dataset_details(id: str) -> dict:
     """
     Get detailed information about a specific dataset from the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
     
@@ -92,7 +93,7 @@ def get_dataset_by_id(id: str) -> dict:
     return {"error": f"Item with ID {id} not found"}
 
 @mcp.prompt()
-def generate_questions(topic: str) -> str:
+def question_generation(topic: str) -> str:
     return f"""Topic: {topic}
     Follow these steps to complete the task:
     1. Based on the topic, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
@@ -107,7 +108,7 @@ def generate_questions(topic: str) -> str:
     """
 
 @mcp.prompt()
-def analyze_quickly(question: str) -> str:
+def analysis_quick(question: str) -> str:
     return f"""Provide a quick analysis of the following question: {question}
     Rules:
     - Do not include or generate synthetic data. All conclusions should be grounded in the data.
@@ -134,7 +135,7 @@ def analyze_quickly(question: str) -> str:
 # Claude Sonnet 4 is the best model for this task.
 # GPT 4.1 produces more straight forward answers.
 @mcp.prompt()
-def full_analysis(question: str) -> str:
+def analysis_full(question: str) -> str:
     return f"""Provide a full analysis of the following question: {question}
     Rules:
     - Do not include or generate synthetic data. All conclusions should be grounded in the data.
