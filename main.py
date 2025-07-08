@@ -92,14 +92,42 @@ def get_dataset_by_id(id: str) -> dict:
     return {"error": f"Item with ID {id} not found"}
 
 @mcp.prompt()
-def generate_questions_by_topic(topic: str) -> str:
+def generate_questions(topic: str) -> str:
     return f"""Topic: {topic}
     Follow these steps to complete the task:
-    - Based on the topic, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
-    - If no relevant datasets are found, retry the search with a different query.
-    - Based on the search results, get the detailed information of one or more datasets.
-    - Think hard, generate a list of 5 questions that would be possible to answer with the datasets and it is related to the topic.
-    - You questions should be based on the datasets and the topic. Do not make up questions.
+    1. Based on the topic, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru.
+    2. If no relevant datasets are found, retry the search with a different query.
+    3. Based on the search results, get the detailed information of one or more datasets.
+    4. Think hard, generate a list of 5 questions that would be possible to answer with the datasets and it is related to the topic.
+    5. You questions should be based on the datasets and the topic. Do not make up questions.
+    6. Show the questions in a list format do not add extra text or comments.
+    """
+
+@mcp.prompt()
+def analyze_quickly(question: str) -> str:
+    return f"""Answer the following question: {question}
+    Follow these steps to complete the task:
+    1. Based on the question, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru that help you answer the question.
+    2. If no relevant datasets are found, retry the search with a different query.
+    3. Based on the search results, get the detailed information of one or more datasets.
+    4. Think hard how to answer the question using the dataset or datasets.
+    5. Create a jupyter notebook with one two code cells: one for the installations and the other for the code.
+    6. The code should be in python. Implement the code to answer the question using the datasets in the code cell. You can create temporal cells to explore the data, but you should delete them at the end.
+    7. Run the code cell to answer the question. Check for error, if error then fix, and execute again the same cell, do until the whole notebook runs correctly and the answer is addressed.
+    8. Check you only worked on a single code cell.
+    """
+
+# Execute the notebook. Check for error, if error then fix, and execute again, do until the whole notebook runs correctly
+@mcp.prompt()
+def full_analysis(question: str) -> str:
+    return f"""Answer the following question: {question}
+    Follow these steps to complete the task:
+    1. Based on the question, search for datasets in the PNDA (Plataforma Nacional de Datos Abiertos) Peru that help you answer the question.
+    2. If no relevant datasets are found, retry the search with a different query.
+    3. Based on the search results, get the detailed information of one or more datasets.
+    4. Think hard how to answer the question using the dataset or datasets.
+    5. Create a jupyter notebook with the code to answer the question using the datasets. The implementation should be in python. The notebook should be in a way that is easy to understand and follow.
+    6. After the notebook is created, execute it. Check for error, if error then fix, and execute again, do until the whole notebook runs correctly.
     """
 
 if __name__ == "__main__":
