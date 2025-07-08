@@ -20,6 +20,7 @@
 ## 📋 Table of Contents
 
 - [🎯 Overview](#-overview)
+- [🎬 Demo](#-demo)
 - [🔧 Tools](#-tools)
 - [💬 Prompts](#-prompts)
 - [🚀 How to Use](#-how-to-use)
@@ -35,12 +36,22 @@ PNDA-MCP is a **Model Context Protocol (MCP) server** for **Peru's National Open
 
 ---
 
+## 🎬 Demo
+
+<div align="center">
+
+</div>
+
+Demo (Spanish):
+
+---
+
 ## 🔧 Tools
 
 | Name | Input | Description |
 |------|-------|-------------|
-| `search_datasets` | `query`, `top_k` | Search for relevant datasets from Peru's PNDA platform using semantic search. Returns matching datasets with relevance scores and metadata. |
-| `get_dataset_by_id` | `id` | Retrieve detailed information about a specific dataset by its ID, including title, resources, file formats, and metadata. |
+| `dataset_search` | `query`, `top_k` | Search for relevant datasets from the PNDA (Plataforma Nacional de Datos Abiertos) Peru. `query` is the search text, `top_k` limits the number of results returned (max 25). |
+| `dataset_details` | `id` | Get dataset details including title, metadata, and resources. Returns complete resource information: direct download URLs, file names, sizes, creation dates, MIME types, formats, states, and descriptions. |
 
 ---
 
@@ -48,9 +59,9 @@ PNDA-MCP is a **Model Context Protocol (MCP) server** for **Peru's National Open
 
 | Name | Input | Description |
 |------|-------|-------------|
-| `generate_questions` | `topic` | Generates 5 analysis questions based on a topic using PNDA datasets. Searches for relevant datasets, explores their structure, and creates meaningful questions that can be answered with the available data. |
-| `analyze_quickly` | `question` | Provides a quick but high-quality analysis of a question using PNDA datasets. Creates a minimal Jupyter notebook with data exploration, code implementation, and brief analysis with visualizations. |
-| `full_analysis` | `question` | Provides a comprehensive analysis of a question using PNDA datasets. Creates a detailed Jupyter notebook with complete data exploration, implementation, and thorough analysis. |
+| `question_generation` | `topic` | Generate 5 data analysis questions for any topic using available PNDA datasets. |
+| `analysis_quick` | `question` | Create a minimal Jupyter notebook with quick data analysis addressing a question. |
+| `analysis_full` | `question` | Create a complete Jupyter notebook with detailed data exploration and analysis addressing a question. |
 
 ---
 
