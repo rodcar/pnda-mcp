@@ -1,17 +1,17 @@
 <div align="center">
 
 # PNDA-MCP
-#### **Model Context Protocol (MCP) Server for PNDA**
+#### **Model Context Protocol (MCP) Server for PNDA - National Open Data Platform / Plataforma Nacional de Datos Abiertos (Peru)**
 
 ---
 
 ### 👨‍💻 Author
 
-**Your Name**
+**Ivan Yang Rodriguez Carranza**
 
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/yourprofile)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:ivanrodcar@outlook.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/irodcar)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rodcar)
 
 </div>
 
@@ -31,7 +31,7 @@
 
 ## 🎯 Overview
 
-PNDA-MCP is a **Model Context Protocol (MCP) server** that provides functionality for PNDA (Platform for Network Data Analytics). This server enables AI agents and applications to interact with PNDA through a standardized MCP interface.
+PNDA-MCP is a **Model Context Protocol (MCP) server** for **Peru's National Open Data Platform (Plataforma Nacional de Datos Abiertos)**. Although Peru's open data platform [datosabiertos.gob.pe](https://datosabiertos.gob.pe) hosts valuable datasets, it can be a challenging for AI agents to find and retrieve the most relevant data for a specific data analysis question. PNDA-MCP simplifies this by providing tools and prompts that let AI agents or any MCP client (such as VS Code or Claude Desktop) easily search for and access datasets, their metadata, and associated data files. The goal is to enable data scientist agents or code agents to automatically discover and analyze public datasets.
 
 ---
 
@@ -39,7 +39,8 @@ PNDA-MCP is a **Model Context Protocol (MCP) server** that provides functionalit
 
 | Name | Input | Description |
 |------|-------|-------------|
-| `tool_1` | - | Placeholder tool for PNDA functionality |
+| `search_datasets` | `query`, `top_k` | Search for relevant datasets from Peru's PNDA platform using semantic search. Returns matching datasets with relevance scores and metadata. |
+| `get_dataset_by_id` | `id` | Retrieve detailed information about a specific dataset by its ID, including title, resources, file formats, and metadata. |
 
 ---
 
@@ -47,7 +48,9 @@ PNDA-MCP is a **Model Context Protocol (MCP) server** that provides functionalit
 
 | Name | Input | Description |
 |------|-------|-------------|
-| `prompt_1` | - | Placeholder prompt for PNDA functionality |
+| `generate_questions` | `topic` | Generates 5 analysis questions based on a topic using PNDA datasets. Searches for relevant datasets, explores their structure, and creates meaningful questions that can be answered with the available data. |
+| `analyze_quickly` | `question` | Provides a quick but high-quality analysis of a question using PNDA datasets. Creates a minimal Jupyter notebook with data exploration, code implementation, and brief analysis with visualizations. |
+| `full_analysis` | `question` | Provides a comprehensive analysis of a question using PNDA datasets. Creates a detailed Jupyter notebook with complete data exploration, implementation, and thorough analysis. |
 
 ---
 
