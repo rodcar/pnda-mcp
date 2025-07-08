@@ -26,13 +26,16 @@
 - [🚀 How to Use](#-how-to-use)
 - [💡 Examples](#-examples)
 - [🏛️ Architecture Diagram](#️-architecture-diagram)
+- [🔄 ETL Pipeline](#-etl-pipeline)
 - [📝 License](#-license)
 
 ---
 
 ## 🎯 Overview
 
-PNDA-MCP is a **Model Context Protocol (MCP) server** for **Peru's National Open Data Platform (Plataforma Nacional de Datos Abiertos)**. Although Peru's open data platform [datosabiertos.gob.pe](https://datosabiertos.gob.pe) hosts valuable datasets, it can be a challenging for AI agents to find and retrieve the most relevant data for a specific data analysis question. PNDA-MCP simplifies this by providing tools and prompts that let AI agents or any MCP client (such as VS Code or Claude Desktop) easily search for and access datasets, their metadata, and associated data files. The goal is to enable data scientist agents or code agents to automatically discover and analyze public datasets.
+PNDA-MCP is a **Model Context Protocol (MCP) server** for **Peru's National Open Data Platform (Plataforma Nacional de Datos Abiertos)**. Although Peru's open data platform [datosabiertos.gob.pe](https://datosabiertos.gob.pe) hosts valuable datasets, it can be a challenging for AI agents to find and retrieve the most relevant data for a specific data analysis question. PNDA-MCP simplifies this by providing tools and prompts that let AI agents or any MCP client (such as VS Code or Claude Desktop) easily search for and access datasets metadata, and associated data files. The goal is to enable data scientist agents or code agents to automatically discover and analyze public datasets.
+
+This repository includes the ETL pipeline used to extract, transform, and index dataset references (see `etl` folder).
 
 ---
 
@@ -147,26 +150,130 @@ flowchart LR
 
 ---
 
-## 🔄 ETL Pipeline Diagram
+## 🔁 ETL Pipeline
+
+The ETL pipeline is a core component that keeps the vector database of dataset references synchronized with Peru's National Open Data Platform. It can be run manually or automatically via cron jobs to ensure dataset information is always up-to-date.
+
+The ETL pipeline processes PNDA datasets in three phases: **Extract** (fetches dataset metadata from PNDA API), **Transform** (cleans and structures the data), and **Load** (creates embeddings and stores them in Pinecone). This system uses a distributed task queue architecture with several key components working together seamlessly.
+
+The architecture includes a **Pipeline Orchestrator** (`pipeline.py`) that serves as the main ETL coordinator, **Celery Workers** (`tasks/app.py`) for distributed task processing, **Redis** as the message broker and result backend, specialized **Task Modules** for each processing phase, and **Automation** through cron-based scheduling for regular updates.
+
+### 📊 ETL Diagram
 
 ```mermaid
 flowchart LR
-    ETL_SCRIPT["ETL Pipeline\n(pipeline.py)"] --> CELERY["Celery Worker\n(tasks/app.py)"]
-    CELERY --> EXTRACT["Extract\n(extract_tasks.py)"]
-    CELERY --> TRANSFORM["Transform\n(transform_tasks.py)"]
-    CELERY --> LOAD["Load\n(load_tasks.py)"]
-    EXTRACT --> PNDA_API["PNDA API"]
-    LOAD --> PINECONE["Pinecone"]
-    CELERY --> REDIS["Redis\n(Broker/Backend)"]
-    style ETL_SCRIPT fill:#f9fbe7
-    style CELERY fill:#e8f5e9
-    style EXTRACT fill:#e1f5fe
-    style TRANSFORM fill:#fffde7
-    style LOAD fill:#f3e5f5
-    style PNDA_API fill:#e1f5fe
-    style PINECONE fill:#fff3e0
-    style REDIS fill:#fbe9e7
+    subgraph EXTRACT_WRAPPER["<b>Extract</b>"]
+        EXTRACT["Fetch complete dataset list from PNDA API"] --> PNDA_API["For each dataset, fetch metadata from PNDA API"]
+    end
+    
+    subgraph TRANSFORM_WRAPPER["<b>Transform</b>"]
+        FILTER["Filter active datasets"] --> STRUCTURE["Format dataset metadata for indexing"]
+    end
+    
+    subgraph LOAD_WRAPPER["<b>Load</b>"]
+        FILTER_CHANGED["Filter datasets with changes*"] --> EMBEDDINGS["Generate embeddings using OpenAI Text Embeddings API"] --> UPSERT["Upsert embeddings to the vector database (Pinecone)"]
+    end
+    
+    EXTRACT_WRAPPER e1@==> TRANSFORM_WRAPPER
+    TRANSFORM_WRAPPER e2@==> LOAD_WRAPPER
+    
+    e1@{ animate: true }
+    e2@{ animate: true }
+    
+    style EXTRACT fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style PNDA_API fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style FILTER fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style STRUCTURE fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style FILTER_CHANGED fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style EMBEDDINGS fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style UPSERT fill:#fff3e0,stroke:#f57c00,stroke-width:2px
 ```
+
+### 🔧 Components
+
+#### Phase 1: Extract (`extract_tasks.py`)
+- Fetches complete dataset list from PNDA API
+- Retrieves individual dataset metadata and resources
+- Handles API rate limiting and error recovery
+
+#### Phase 2: Transform (`transform_tasks.py`)
+- Filters active datasets only
+- Extracts relevant resource metadata (URLs, sizes, formats, etc.)
+- Structures data for embedding generation
+
+#### Phase 3: Load (`load_tasks.py`)
+- Generates embeddings using OpenAI API
+- Implements incremental updates (only processes changed datasets)
+- Stores vectors in Pinecone with metadata
+
+#### Supporting Components
+- **`pinecone_tasks.py`**: Index initialization and management
+- **`logger_config.py`**: Centralized logging configuration
+- **`celery_worker.sh`**: Worker startup script
+- **`cron.sh`**: Automated execution script
+
+### ⚙️ Configuration
+
+The ETL pipeline requires the following environment variables:
+
+```bash
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_key
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+# Pinecone Configuration
+PINECONE_API_KEY=your_pinecone_key
+PINECONE_INDEX_NAME=pnda-mcp-index
+PINECONE_DIMENSION=1536
+PINECONE_METRIC=cosine
+PINECONE_CLOUD=aws
+PINECONE_REGION=us-east-1
+
+# Celery Configuration
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+WORKER_CONCURRENCY=4
+```
+
+### 🚀 Running the ETL
+
+#### Manual Execution
+```bash
+# Start Celery worker
+./etl/celery_worker.sh
+
+# Run ETL pipeline
+python -m etl.pipeline
+```
+
+#### Automated Execution
+```bash
+# Setup cron job (runs every 2 minutes)
+crontab -e
+
+# Add this line:
+*/2 * * * * /path/to/pnda-mcp/etl/cron.sh
+
+# Make script executable
+chmod +x /path/to/pnda-mcp/etl/cron.sh
+```
+
+### 📁 Output
+
+The ETL pipeline generates the following outputs:
+
+- **`etl/results/responses_results.json`**: Raw extraction results
+- **`etl/results/processing_results.json`**: Transformed dataset metadata
+- **`etl/logs/etl.log`**: Comprehensive execution logs
+- **Pinecone Index**: Vector embeddings for semantic search
+
+### 🔍 Monitoring
+
+Monitor ETL execution through:
+- Log files in `etl/logs/`
+- Celery worker status
+- Pinecone index statistics
+- Cron job execution logs
 
 ---
 
@@ -175,48 +282,3 @@ flowchart LR
 This project is licensed under the [Apache License 2.0](LICENSE).
 
 ---
-
-
-(correct)
-./etl/celery_worker.sh
-
-(correct)
-python -m etl.pipeline
-
-
-crontab -e
-
-SHELL=/bin/bash
-*/1 * * * * /Users/ivan/Workspace/mcp-projects/pnda-mcp/etl/cron.sh
-
-ESC + :wq + ENTER
-
-crontab -l
-
-crontab -r
-
----
-/Users/ivan/miniconda3/bin/python3
-
-*/2 * * * * /Users/ivan/Workspace/mcp-projects/pnda-mcp/etl/cron.sh
-
-SHELL=/bin/bash
-*/2 * * * * /Users/ivan/Workspace/mcp-projects/pnda-mcp/etl/cron.sh
-
-chmod +x /Users/ivan/Workspace/mcp-projects/pnda-mcp/etl/cron.sh
-
-:wq
-
-crontab -e
-
-dd -> to delete
-esc + :wq
-
-crontab -l
-
-crontab -r ->delete
-
-
-
-SHELL=/bin/bash
-*/1 * * * * /Users/ivan/Workspace/mcp-projects/pnda-mcp/etl/cron.sh
