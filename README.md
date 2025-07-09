@@ -73,7 +73,7 @@ Demo (Spanish):
 ### **VS Code (Remote Server)**
 > **Note:** Requires `npx` which comes bundled with npm. If you don't have npm installed, install [Node.js](https://nodejs.org/) which includes npm.
 
-The fastest and easiest way to try this MCP is use the 1-click installation button:
+The fastest and easiest way to try this MCP is to use the 1-click installation button:
 
 [![Install PNDA-MCP](https://img.shields.io/badge/VS_Code-Install_PNDA_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=bcrp-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fbcrp-mcp.onrender.com%2Fmcp%22%5D%7D) [![Install PNDA-MCP (Insiders)](https://img.shields.io/badge/VS_Code_Insiders-Install_PNDA_MCP-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=bcrp-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fbcrp-mcp.onrender.com%2Fmcp%22%5D%7D&quality=insiders)
 
@@ -328,6 +328,9 @@ flowchart LR
     style EMBEDDINGS fill:#fff3e0,stroke:#f57c00,stroke-width:2px
     style UPSERT fill:#fff3e0,stroke:#f57c00,stroke-width:2px
 ```
+
+*Filters datasets where `metadata_modified` has changed since the last local version (`etl/results/processing_results.json`). This means the metadata must be updated in the vector database.
+
 
 ---
 
