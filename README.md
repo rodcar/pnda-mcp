@@ -75,7 +75,7 @@ Demo (Spanish):
 
 The fastest and easiest way to try this MCP is to use the 1-click installation button:
 
-[![Install PNDA-MCP](https://img.shields.io/badge/VS_Code-Install_PNDA_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=bcrp-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fbcrp-mcp.onrender.com%2Fmcp%22%5D%7D) [![Install PNDA-MCP (Insiders)](https://img.shields.io/badge/VS_Code_Insiders-Install_PNDA_MCP-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=bcrp-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fbcrp-mcp.onrender.com%2Fmcp%22%5D%7D&quality=insiders)
+[![Install PNDA-MCP](https://img.shields.io/badge/VS_Code-Install_PNDA_MCP-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=pnda-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fpnda-mcp.onrender.com%2Fmcp%22%5D%7D) [![Install PNDA-MCP (Insiders)](https://img.shields.io/badge/VS_Code_Insiders-Install_PNDA_MCP-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=pnda-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22mcp-remote%22%2C%22https%3A%2F%2Fpnda-mcp.onrender.com%2Fmcp%22%5D%7D&quality=insiders)
 
 > **Note:** If the MCP tools and prompts do not load immediately, please try restarting VS Code.
 
