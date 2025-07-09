@@ -152,13 +152,64 @@ flowchart LR
 
 ## 🔁 ETL Pipeline
 
-The ETL pipeline is a core component that keeps the vector database of dataset references synchronized with Peru's National Open Data Platform. It can be run manually or automatically via cron jobs to ensure dataset information is always up-to-date.
+> **Note:** The following ETL documentation is only needed if you want to run the MCP locally or deploy your own MCP service. You can use the remote MCP service without running the ETL.
 
-The ETL pipeline processes PNDA datasets in three phases: **Extract** (fetches dataset metadata from PNDA API), **Transform** (cleans and structures the data), and **Load** (creates embeddings and stores them in Pinecone). This system uses a distributed task queue architecture with several key components working together seamlessly.
+To search datasets using natural language, semantic search with text vector embeddings is used. The ETL pipeline handles the initial indexing and ongoing synchronization of the vector database containing dataset metadata from Peru's National Open Data Platform. It can be run manually or automatically via cron jobs to ensure the dataset information stays up to date.
 
-The architecture includes a **Pipeline Orchestrator** (`pipeline.py`) that serves as the main ETL coordinator, **Celery Workers** (`tasks/app.py`) for distributed task processing, **Redis** as the message broker and result backend, specialized **Task Modules** for each processing phase, and **Automation** through cron-based scheduling for regular updates.
+### Requirements
 
-### 📊 ETL Diagram
+- **Redis server**: Message broker and result backend for distributed task processing via Celery.
+- **OpenAI API key**: Valid API key with access to text embedding models (specifically `text-embedding-3-small`) for generating vector representations of dataset metadata
+- **Pinecone account**: Active account with API access for cloud-based vector database operations, including index creation and vector storage/retrieval. If you don't have a Pinecone account, sign up at [pinecone.io](https://www.pinecone.io/).
+
+### Running the ETL
+
+Clone repository
+
+Configuration env vars
+
+
+commadn to create .env based on .env.example
+then set openai api key
+set pinecone api key
+
+Run Redis with Docker
+
+> **Note:** This is not the only way to have a broker and backend for Celery. See [Celery documentation](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/index.html) for other options. 
+
+```bash
+docker run -d -p 6379:6379 redis
+```
+
+```bash
+# Start Celery worker
+./etl/celery_worker.sh
+```
+
+#### Manual Execution
+```bash
+# Run ETL pipeline
+python -m etl.pipeline
+```
+
+#### Automated Execution
+```bash
+# Setup cron job (runs every 2 minutes)
+crontab -e
+
+# Add this line:
+*/2 * * * * /path/to/pnda-mcp/etl/cron.sh
+
+# Make script executable
+chmod +x /path/to/pnda-mcp/etl/cron.sh
+
+# Check
+crontab -l
+```
+
+"results" folder and logs.
+
+### ETL Diagram
 
 ```mermaid
 flowchart LR
@@ -189,92 +240,6 @@ flowchart LR
     style UPSERT fill:#fff3e0,stroke:#f57c00,stroke-width:2px
 ```
 
-### 🔧 Components
-
-#### Phase 1: Extract (`extract_tasks.py`)
-- Fetches complete dataset list from PNDA API
-- Retrieves individual dataset metadata and resources
-- Handles API rate limiting and error recovery
-
-#### Phase 2: Transform (`transform_tasks.py`)
-- Filters active datasets only
-- Extracts relevant resource metadata (URLs, sizes, formats, etc.)
-- Structures data for embedding generation
-
-#### Phase 3: Load (`load_tasks.py`)
-- Generates embeddings using OpenAI API
-- Implements incremental updates (only processes changed datasets)
-- Stores vectors in Pinecone with metadata
-
-#### Supporting Components
-- **`pinecone_tasks.py`**: Index initialization and management
-- **`logger_config.py`**: Centralized logging configuration
-- **`celery_worker.sh`**: Worker startup script
-- **`cron.sh`**: Automated execution script
-
-### ⚙️ Configuration
-
-The ETL pipeline requires the following environment variables:
-
-```bash
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_key
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-
-# Pinecone Configuration
-PINECONE_API_KEY=your_pinecone_key
-PINECONE_INDEX_NAME=pnda-mcp-index
-PINECONE_DIMENSION=1536
-PINECONE_METRIC=cosine
-PINECONE_CLOUD=aws
-PINECONE_REGION=us-east-1
-
-# Celery Configuration
-CELERY_BROKER_URL=redis://localhost:6379/0
-CELERY_RESULT_BACKEND=redis://localhost:6379/0
-WORKER_CONCURRENCY=4
-```
-
-### 🚀 Running the ETL
-
-#### Manual Execution
-```bash
-# Start Celery worker
-./etl/celery_worker.sh
-
-# Run ETL pipeline
-python -m etl.pipeline
-```
-
-#### Automated Execution
-```bash
-# Setup cron job (runs every 2 minutes)
-crontab -e
-
-# Add this line:
-*/2 * * * * /path/to/pnda-mcp/etl/cron.sh
-
-# Make script executable
-chmod +x /path/to/pnda-mcp/etl/cron.sh
-```
-
-### 📁 Output
-
-The ETL pipeline generates the following outputs:
-
-- **`etl/results/responses_results.json`**: Raw extraction results
-- **`etl/results/processing_results.json`**: Transformed dataset metadata
-- **`etl/logs/etl.log`**: Comprehensive execution logs
-- **Pinecone Index**: Vector embeddings for semantic search
-
-### 🔍 Monitoring
-
-Monitor ETL execution through:
-- Log files in `etl/logs/`
-- Celery worker status
-- Pinecone index statistics
-- Cron job execution logs
-
 ---
 
 ## 📝 License
@@ -282,3 +247,9 @@ Monitor ETL execution through:
 This project is licensed under the [Apache License 2.0](LICENSE).
 
 ---
+
+<div align="center">
+
+[Report Bug](https://github.com/rodcar/bcrp-mcp/issues) · [Request Feature](https://github.com/rodcar/bcrp-mcp/issues)
+
+</div>
