@@ -4,6 +4,9 @@ from openai import OpenAI
 import os
 import json
 from dotenv import load_dotenv
+import requests
+
+PNDA_API_BASE_URL = "https://www.datosabiertos.gob.pe/api/3/action"
 
 load_dotenv()
 
@@ -76,7 +79,13 @@ def dataset_details(id: str) -> dict:
                 pass
         return {"id": id, "metadata": metadata, "text": metadata.get("text") if metadata else None}
     
-    # Fallback to Pinecone
+    # Fallback to PNDA
+    try:
+        result = requests.get(f"{PNDA_API_BASE_URL}/package_show?id={id}").json().get("result", {})
+        return {"id": id, "text": result.get("title", "").strip(), "resources": result.get("resources", [])}
+    except: pass
+
+    # Secondary fallback to Pinecone
     result = index.fetch(ids=[id])
     if id in result.vectors:
         vector_data = result.vectors[id]
