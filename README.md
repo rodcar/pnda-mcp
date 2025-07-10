@@ -199,7 +199,7 @@ To search datasets using natural language, semantic search with text vector embe
 ### Requirements
 
 - **Docker & Redis**: Runs Redis server locally which serves as a message broker and result backend to coordinate tasks during ETL pipeline execution with Celery workers.
-- **OpenAI API key**: The OpenAI Text Embeddings API converts dataset titles into vectors using the text-embedding-3-small model. Get your OpenAI API key from [platform.openai.com](https://platform.openai.com/).
+- **OpenAI API key**: The OpenAI Text Embeddings API converts dataset titles into vectors using the `text-embedding-3-small` model. Get your OpenAI API key from [platform.openai.com](https://platform.openai.com/).
 - **Pinecone account**: Dataset titles are indexed in Pinecone cloud vector database for semantic search. If you don't have an account, you can sign up at [pinecone.io](https://www.pinecone.io/).
 
 ### Setup and Usage
