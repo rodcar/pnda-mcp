@@ -43,9 +43,11 @@ This repository includes the ETL pipeline used to extract, transform, and index 
 
 <div align="center">
 
+https://github.com/user-attachments/assets/57ca9df2-5d71-4eb3-b868-8dbc6833e7c1
+
 </div>
 
-Demo (Spanish):
+Demo (Spanish): [https://youtu.be/dybtNQP33Sk?si=iA3-iWpn3oRJ9fta](https://youtu.be/dybtNQP33Sk?si=iA3-iWpn3oRJ9fta)
 
 ---
 
