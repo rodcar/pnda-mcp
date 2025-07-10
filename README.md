@@ -139,14 +139,14 @@ Open MCP Inspector (URL displayed in the console) and configure the MCP client w
 
 ## 💡 Examples
 
-| Prompt | Input | Results | Language |
-|--------|-------|---------|----------|
-| `question_generation` | Mining | [View Questions](https://example.com/questions/mining-en) | English |
-| `analysis_quick` | What is the trend in public education enrollment in Peru? | [View Notebook](https://example.com/notebooks/education-quick-en) | English |
-| `analysis_full` | How does healthcare spending correlate with health outcomes across regions? | [View Notebook](https://example.com/notebooks/healthcare-full-en) | English |
-| `question_generation` | Minería | [View Questions](https://example.com/questions/mining-es) | Spanish |
-| `analysis_quick` | ¿Cuál es la tendencia en la matrícula de educación pública en Perú? | [View Notebook](https://example.com/notebooks/education-quick-es) | Spanish |
-| `analysis_full` | ¿Cómo se correlaciona el gasto en salud con los resultados de salud en las regiones? | [View Notebook](https://example.com/notebooks/healthcare-full-es) | Spanish |
+| Prompt | Input | Demo | Notebook | Language |
+|--------|-------|---------|----------|----------|
+| `question_generation` | Mining | [View Demo](https://example.com/) | - | English |
+| `analysis_quick` | How has student enrollment at the National University of Engineering evolved between 2017 and 2023 by faculties and degree programs? | [View Demo](https://example.com/) | [View Notebook](examples/analysis_quick_ES.ipynb) | English |
+| `analysis_full` | What types of fatal accidents are most frequent in the Peruvian mining industry, and in which departments do they occur most often? | [View Demo](https://example.com/) | [View Notebook](examples/analysis_quick_ES.ipynb) | English |
+| `question_generation` | Minería | [View Demo](https://youtu.be/HzuxIuh2L6g) | - | Spanish |
+| `analysis_quick` | ¿Cómo ha evolucionado la matrícula de estudiantes en la Universidad Nacional de Ingeniería entre 2017 y 2023 por facultades y carreras? | [View Demo](https://youtu.be/JMAa6UpCsEQ) | [View Notebook](examples/analysis_quick_ES.ipynb) | Spanish |
+| `analysis_full` | ¿Qué tipos de accidentes mortales son más frecuentes en la industria minera peruana y en qué departamentos ocurren con mayor frecuencia? | [View Demo](https://youtu.be/dybtNQP33Sk) | [View Notebook](examples/analysis_full_ES.ipynb) | Spanish |
 
 ---
 
